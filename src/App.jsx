@@ -1,20 +1,21 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import SignInPage from "./pages/signin";
 import SignUpPage from "./pages/signup";
-import ErrorPage from "./pages/404"; 
-import DashboardPage from "./pages/dashboard"; 
-import BalancePage from "./pages/BalancePage"; 
+import DashboardPage from "./pages/dashboard";
+import BalancePage from "./pages/BalancePage";
+import ErrorPage from "./pages/404";
 
 const App = () => {
-  const myRouter = createBrowserRouter([
+  const router = createBrowserRouter([
     {
       path: "/",
       element: <DashboardPage />,
       errorElement: <ErrorPage />,
     },
     {
-      path: "/balance", 
+      path: "/balance",
       element: <BalancePage />,
     },
     {
@@ -27,7 +28,7 @@ const App = () => {
     },
   ]);
 
-  return <RouterProvider router={myRouter} />;
+  return <RouterProvider router={router} />;
 };
 
 export default App;
