@@ -3,20 +3,46 @@ import Button from "../Elements/Button";
 import LabeledInput from "../Elements/LabeledInput";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../../context/themeContext";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
-const FormSignUp = () => {
+const FormSignUp = ({ onSubmit }) => {
   const { theme } = useContext(ThemeContext);
   const [showPassword, setShowPassword] = useState(false);
 
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required("Nama wajib diisi"),
+      email: Yup.string()
+        .email("Format email salah")
+        .required("Email wajib diisi"),
+      password: Yup.string().required("Password wajib diisi"),
+    }),
+    onSubmit: async (values) => {
+      await onSubmit(values);
+    },
+  });
+
   return (
-    <form className="transition-all duration-300">
+    <form onSubmit={formik.handleSubmit} className="transition-all duration-300">
       <div className="mb-4">
         <LabeledInput
           label="Name"
           type="text"
           placeholder="Tanzir Rahman"
           name="name"
+          value={formik.values.name}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
+        {formik.touched.name && formik.errors.name && (
+          <div className="text-red-500 text-xs mt-1">{formik.errors.name}</div>
+        )}
       </div>
 
       <div className="mb-4">
@@ -25,7 +51,13 @@ const FormSignUp = () => {
           type="email"
           placeholder="hello@example.com"
           name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
+        {formik.touched.email && formik.errors.email && (
+          <div className="text-red-500 text-xs mt-1">{formik.errors.email}</div>
+        )}
       </div>
 
       <div className="mb-4 relative">
@@ -34,6 +66,9 @@ const FormSignUp = () => {
           type={showPassword ? "text" : "password"}
           placeholder="*************"
           name="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
         <button
           type="button"
@@ -60,6 +95,11 @@ const FormSignUp = () => {
             />
           </svg>
         </button>
+        {formik.touched.password && formik.errors.password && (
+          <div className="text-red-500 text-xs mt-1">
+            {formik.errors.password}
+          </div>
+        )}
       </div>
 
       <div className="mb-6">
@@ -77,10 +117,11 @@ const FormSignUp = () => {
 
       <Button
         type="submit"
-        className="w-full text-white transition-all duration-200 hover:opacity-90 active:scale-95"
+        disabled={formik.isSubmitting}
+        className="w-full text-white transition-all duration-200 hover:opacity-90 active:scale-95 disabled:opacity-50"
         style={{ backgroundColor: theme.color }}
       >
-        Sign up
+        {formik.isSubmitting ? "Loading..." : "Register"}
       </Button>
 
       <div className="my-6 flex items-center justify-center relative">
